@@ -33,6 +33,44 @@ async function applyStealth(page: Page) {
   });
 }
 
+// A list of common tracking, ad, and analytics domains to block for performance
+const blockedDomains = [
+  'googletagmanager.com',
+  'google-analytics.com',
+  'googlesyndication.com',
+  'adservice.google.com',
+  'doubleclick.net',
+  'facebook.net',
+  'fbcdn.net',
+  'connect.facebook.net',
+  'analytics.twitter.com',
+  'youtube.com',
+  'scorecardresearch.com',
+  'adinjector.net',
+  'adsrvr.org',
+  'amazon-adsystem.com',
+  'criteo.com',
+  'hotjar.com',
+  'mixpanel.com',
+  'optimizely.com',
+  'quantserve.com',
+  'segment.io',
+  'vwo.com',
+  'clarity.ms',
+  'bing.com',
+  'adobedtm.com',
+];
+
+async function setupRequestBlocking(page: Page) {
+  await page.route('**/*', (route) => {
+    const url = route.request().url();
+    if (blockedDomains.some(domain => url.includes(domain))) {
+      return route.abort();
+    }
+    return route.continue();
+  });
+}
+
 // Environment helpers
 function isServerlessEnv() {
   return Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
@@ -245,7 +283,7 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
   const height = deviceConfig.height;
   // Respect user delay but cap it to fit in remaining budget
   const requestedDelay = options.delay ?? 2000;
-  const delayCap = serverless ? 2000 : 10000;
+  const delayCap = 10000; // Increased cap for serverless
   const delay = Math.max(0, Math.min(requestedDelay, delayCap));
 
   const context = await browser.newContext({
@@ -258,11 +296,12 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
 
   try {
     await applyStealth(page);
+    await setupRequestBlocking(page);
     await disableLazyLoading(page);
     await bypassIntersectionObserver(page);
 
     console.log(`[Screenshot] Navigating to: ${sanitizedUrl}`);
-    await page.goto(sanitizedUrl, { waitUntil: "domcontentloaded", timeout: Math.min(timeout, timeLeft()) });
+    await page.goto(sanitizedUrl, { waitUntil: "load", timeout: Math.min(timeout, timeLeft()) });
 
     // Proactively convert existing lazy assets to eager
     await page.evaluate(() => {
@@ -284,19 +323,16 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
       }
     }
 
-    // First wait for basic content
-    try {
-      const renderTimeout = Math.min(8000, Math.max(1000, timeLeft() - 18000));
-      await waitForContentRendered(page, { textLen: 100, visibleEls: 50, timeout: renderTimeout });
-      console.log(`[Screenshot] Basic content rendered`);
-    } catch (e) {
-      console.log(`[Screenshot] Basic content wait timeout`);
+    // Scroll to trigger lazy-loaded content
+    if (fullPage) {
+      console.log(`[Screenshot] Scrolling to trigger lazy-loaded content...`);
+      await autoScroll(page, 150);
     }
 
     // Wait for network to be truly idle (all API calls done)
     console.log(`[Screenshot] Waiting for network idle...`);
     try {
-      const netIdleTimeout = Math.min(5000, Math.max(1000, timeLeft() - 16000));
+      const netIdleTimeout = Math.min(8000, Math.max(1000, timeLeft() - 16000));
       await page.waitForLoadState('networkidle', { timeout: netIdleTimeout });
       console.log(`[Screenshot] Network idle reached`);
     } catch {
