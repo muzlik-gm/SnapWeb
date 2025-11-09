@@ -392,7 +392,6 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     await renewUserCredits(user3.id);
   }
 }
-}
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   console.log('Subscription deleted:', subscription.id);
