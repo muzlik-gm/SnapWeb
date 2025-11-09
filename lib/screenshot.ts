@@ -245,7 +245,7 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
   const height = deviceConfig.height;
   // Respect user delay but cap it to fit in remaining budget
   const requestedDelay = options.delay ?? 2000;
-  const delayCap = serverless ? 2000 : 10000;
+  const delayCap = 10000; // Increased cap for serverless
   const delay = Math.max(0, Math.min(requestedDelay, delayCap));
 
   const context = await browser.newContext({
@@ -262,7 +262,7 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
     await bypassIntersectionObserver(page);
 
     console.log(`[Screenshot] Navigating to: ${sanitizedUrl}`);
-    await page.goto(sanitizedUrl, { waitUntil: "domcontentloaded", timeout: Math.min(timeout, timeLeft()) });
+    await page.goto(sanitizedUrl, { waitUntil: "load", timeout: Math.min(timeout, timeLeft()) });
 
     // Proactively convert existing lazy assets to eager
     await page.evaluate(() => {
