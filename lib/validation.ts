@@ -81,7 +81,7 @@ export const userAgentSchema = z.string()
 export const delaySchema = z.number()
   .int('Delay must be an integer')
   .min(0, 'Delay cannot be negative')
-  .max(15000, 'Delay cannot exceed 15 seconds')
+  .max(10000, 'Delay cannot exceed 10 seconds')
   .optional()
   .default(2000);
 
