@@ -105,6 +105,7 @@ export interface ScreenshotRequest {
 export interface ScreenshotResponse {
   success: boolean;
   imageUrl?: string;
+  downloadUrl?: string;
   metadata?: {
     width: number;
     height: number;

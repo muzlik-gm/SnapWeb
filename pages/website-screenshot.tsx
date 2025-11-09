@@ -3,10 +3,11 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/Button';
+import { ScreenshotModal } from '@/components/ScreenshotModal';
 import { formatFileSize } from '@/lib/utils';
 import type { ScreenshotResponse } from '@/types';
 import { 
-  Monitor, Globe, Camera, Download, CheckCircle, ArrowRight
+  Monitor, Globe, Camera, Download, CheckCircle, ArrowRight, Sparkles
 } from 'lucide-react';
 
 export default function WebsiteScreenshot() {
@@ -19,6 +20,7 @@ export default function WebsiteScreenshot() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ScreenshotResponse | null>(null);
   const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +47,7 @@ export default function WebsiteScreenshot() {
 
       if (data.success && data.data) {
         setResult(data.data);
+        setShowModal(true);
       } else {
         setError(data.error || data.message || 'Failed to generate website screenshot');
       }
@@ -192,50 +195,74 @@ export default function WebsiteScreenshot() {
               )}
 
               {result && result.imageUrl && (
-                <div className="mt-6 p-6 bg-success-50 border border-success-200 rounded-lg">
+                <div className="mt-6 p-6 bg-gradient-to-br from-success-50 to-primary-50 border-2 border-success-300 rounded-xl shadow-lg">
                   <div className="flex items-center mb-4">
-                    <CheckCircle className="w-5 h-5 text-success-600 mr-2" />
-                    <h3 className="text-lg font-semibold text-success-900">Website Screenshot Captured Successfully</h3>
+                    <div className="w-10 h-10 bg-success-500 rounded-full flex items-center justify-center mr-3">
+                      <CheckCircle className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-success-900">Screenshot Generated!</h3>
+                      <p className="text-sm text-success-700">Your website screenshot is ready to view and download</p>
+                    </div>
                   </div>
                   
                   <div className="space-y-4">
-                    <div className="bg-white p-2 rounded-lg border border-secondary-200">
+                    <div 
+                      className="relative bg-white p-3 rounded-xl border-2 border-secondary-200 cursor-pointer hover:border-primary-400 transition-all duration-200 group overflow-hidden"
+                      onClick={() => setShowModal(true)}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end justify-center pb-6 z-10">
+                        <div className="bg-white/95 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg flex items-center gap-2">
+                          <Sparkles className="w-5 h-5 text-primary-600" />
+                          <span className="font-semibold text-secondary-900">Click to View Full Screenshot</span>
+                        </div>
+                      </div>
                       <img
                         src={result.imageUrl}
-                        alt="Website screenshot"
-                        className="w-full h-auto rounded"
+                        alt="Website screenshot preview"
+                        className="w-full h-auto rounded-lg shadow-md"
                         style={{ maxHeight: '300px', objectFit: 'contain' }}
+                        loading="eager"
                       />
                     </div>
 
                     {result.metadata && (
-                      <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div>
-                          <span className="text-secondary-600">Screenshot Size:</span>
-                          <span className="ml-2 font-medium text-secondary-900">
-                            {result.metadata.width} × {result.metadata.height}px
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div className="bg-white/80 backdrop-blur-sm p-3 rounded-lg border border-secondary-200">
+                          <span className="text-xs text-secondary-600 block mb-1">Dimensions</span>
+                          <span className="font-semibold text-secondary-900">
+                            {result.metadata.width} × {result.metadata.height}
                           </span>
                         </div>
-                        <div>
-                          <span className="text-secondary-600">File Size:</span>
-                          <span className="ml-2 font-medium text-secondary-900">
+                        <div className="bg-white/80 backdrop-blur-sm p-3 rounded-lg border border-secondary-200">
+                          <span className="text-xs text-secondary-600 block mb-1">File Size</span>
+                          <span className="font-semibold text-secondary-900">
                             {formatFileSize(result.metadata.fileSize)}
+                          </span>
+                        </div>
+                        <div className="bg-white/80 backdrop-blur-sm p-3 rounded-lg border border-secondary-200 col-span-2 sm:col-span-1">
+                          <span className="text-xs text-secondary-600 block mb-1">Format</span>
+                          <span className="font-semibold text-secondary-900 uppercase">
+                            {format}
                           </span>
                         </div>
                       </div>
                     )}
 
                     <div className="flex flex-col sm:flex-row gap-3">
-                      <a href={result.imageUrl} download className="flex-1">
-                        <Button variant="primary" size="md" className="w-full">
-                          <Download className="w-4 h-4 mr-2" />
-                          Download Website Screenshot
-                        </Button>
-                      </a>
+                      <Button 
+                        variant="primary" 
+                        size="lg" 
+                        className="flex-1 shadow-lg hover:shadow-xl transition-shadow"
+                        onClick={() => setShowModal(true)}
+                      >
+                        <Sparkles className="w-5 h-5 mr-2" />
+                        View Full Screenshot
+                      </Button>
                       
                       {!session && (
                         <Link href="/auth/signup" className="flex-1">
-                          <Button variant="outline" size="md" className="w-full">
+                          <Button variant="outline" size="lg" className="w-full">
                             Sign Up to Save Screenshots
                           </Button>
                         </Link>
@@ -243,6 +270,17 @@ export default function WebsiteScreenshot() {
                     </div>
                   </div>
                 </div>
+              )}
+
+              {result && (
+                <ScreenshotModal
+                  isOpen={showModal}
+                  onClose={() => setShowModal(false)}
+                  imageUrl={result.imageUrl || ''}
+                  downloadUrl={result.downloadUrl}
+                  format={format}
+                  metadata={result.metadata}
+                />
               )}
             </form>
           </div>
