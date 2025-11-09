@@ -5,11 +5,12 @@ import Layout from '@/components/Layout';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { ScreenshotModal } from '@/components/ScreenshotModal';
 import { formatFileSize } from '@/lib/utils';
 import type { ScreenshotResponse } from '@/types';
 import { 
   Monitor, Tablet, Smartphone, Image as ImageIcon, Download, 
-  CheckCircle, Zap, Target, Code, Shield, ArrowRight, Check
+  CheckCircle, Zap, Target, Code, Shield, ArrowRight, Check, Sparkles
 } from 'lucide-react';
 
 export default function Home() {
@@ -22,6 +23,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ id?: string; imageUrl?: string; downloadUrl?: string; metadata?: any } | null>(null);
   const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +53,7 @@ export default function Home() {
         console.log('Image URL:', data.data.imageUrl);
         console.log('Full data.data:', JSON.stringify(data.data, null, 2));
         setResult(data.data);
+        setShowModal(true); // Open modal automatically
         if (typeof window !== 'undefined' && (window as any).gtag) {
           (window as any).gtag('event', 'generate_clicked', {
             event_category: 'engagement',
@@ -73,24 +76,41 @@ export default function Home() {
       description="Generate professional website screenshots for free. Capture any website in desktop, tablet, or mobile view. PNG, JPEG, WebP formats. No registration required. Fast, reliable, high-quality screenshots with API access available."
       keywords="free website screenshot, screenshot generator, website capture tool, web page screenshot, online screenshot tool, website screenshot generator, capture website, screenshot website, web screenshot, website image generator, screenshot tool free, website screenshot online, web page capture, screenshot service, website thumbnail generator, free screenshot tool, online screenshot, screenshot maker, website screencap, web page screencap, site capture, webpage screenshot, website snapshot, web snapshot, screenshot website online, capture website screenshot, website screenshot tool, web screenshot online, screenshot web page, website image generator, web page image generator, screenshot capture, website screenshot service, web screenshot generator online, screenshot website tool, web page screenshot tool, website screenshot maker, web screenshot maker, screenshot generator online, website capture tool, web capture tool, screenshot online tool, website screenshot online free, web page screenshot online, screenshot website online free, capture website screenshot, web page capture tool, website screenshot generator online, web screenshot tool online, screenshot service online, website screenshot online tool, web page screenshot generator, screenshot website generator, web screenshot generator tool, website screenshot tool online, web page screenshot online tool, screenshot generator tool, website capture online, web capture online, screenshot tool free, website screenshot free online, web page screenshot free online, screenshot online free, website screenshot generator free, web screenshot generator free, screenshot generator free online, website capture free, web capture free, screenshot service free, website screenshot service free, web screenshot service free, screenshot tool online free, website screenshot tool free, web page screenshot tool free, screenshot maker free, website screenshot maker free, web screenshot maker free, screenshot capture free, website screenshot capture, web page screenshot capture, screenshot online generator, website screenshot online generator, web page screenshot online generator, screenshot generator online free, website screenshot generator online free, web screenshot generator online free, take screenshot of website, how to screenshot website, website screenshot chrome, website screenshot firefox, website screenshot safari, website screenshot edge, website screenshot browser, website screenshot extension, website screenshot plugin, website screenshot addon, website screenshot app, website screenshot software, website screenshot program, website screenshot utility, website screenshot service, website screenshot API, website screenshot REST API, website screenshot JSON API, website screenshot HTTP API, website screenshot web API, website screenshot developer API, website screenshot integration, website screenshot automation, website screenshot bulk, website screenshot batch, website screenshot multiple, website screenshot mass, website screenshot programmatic, website screenshot headless, website screenshot puppeteer, website screenshot selenium, website screenshot playwright, website screenshot chrome headless, website screenshot nodejs, website screenshot python, website screenshot php, website screenshot ruby, website screenshot java, website screenshot c#, website screenshot .net, website screenshot go, website screenshot rust, website screenshot javascript, website screenshot typescript, website screenshot react, website screenshot vue, website screenshot angular, website screenshot svelte, website screenshot next.js, website screenshot nuxt, website screenshot gatsby, website screenshot wordpress, website screenshot drupal, website screenshot joomla, website screenshot shopify, website screenshot woocommerce, website screenshot magento, website screenshot prestashop, website screenshot opencart, website screenshot bigcommerce, website screenshot squarespace, website screenshot wix, website screenshot webflow, website screenshot elementor, website screenshot divi, website screenshot beaver builder, website screenshot visual composer, website screenshot gutenberg, website screenshot bootstrap, website screenshot tailwind, website screenshot bulma, website screenshot foundation, website screenshot materialize, website screenshot semantic ui, website screenshot ant design, website screenshot material ui, website screenshot chakra ui, website screenshot mantine, website screenshot react bootstrap, website screenshot vue bootstrap, website screenshot angular material, website screenshot ionic, website screenshot cordova, website screenshot phonegap, website screenshot react native, website screenshot flutter, website screenshot xamarin, website screenshot unity, website screenshot unreal, website screenshot godot, website screenshot construct, website screenshot gamemaker, website screenshot rpg maker, website screenshot twine, website screenshot ink, website screenshot yarn, website screenshot articy, website screenshot chatmapper, website screenshot dialogue system, website screenshot fungus, website screenshot ink unity, website screenshot yarn spinner, website screenshot articy draft, website screenshot chatmapper unity, website screenshot dialogue system unity, website screenshot fungus unity, website screenshot ink unreal, website screenshot yarn unreal, website screenshot articy unreal, website screenshot chatmapper unreal, website screenshot dialogue system unreal, website screenshot fungus unreal, website screenshot ink godot, website screenshot yarn godot, website screenshot articy godot, website screenshot chatmapper godot, website screenshot dialogue system godot, website screenshot fungus godot, website screenshot ink construct, website screenshot yarn construct, website screenshot articy construct, website screenshot chatmapper construct, website screenshot dialogue system construct, website screenshot fungus construct, website screenshot ink gamemaker, website screenshot yarn gamemaker, website screenshot articy gamemaker, website screenshot chatmapper gamemaker, website screenshot dialogue system gamemaker, website screenshot fungus gamemaker, website screenshot ink rpg maker, website screenshot yarn rpg maker, website screenshot articy rpg maker, website screenshot chatmapper rpg maker, website screenshot dialogue system rpg maker, website screenshot fungus rpg maker, website screenshot ink twine, website screenshot yarn twine, website screenshot articy twine, website screenshot chatmapper twine, website screenshot dialogue system twine, website screenshot fungus twine"
     >
-      {/* PROFESSIONAL HERO SECTION */}
-      <section className="bg-white py-16 sm:py-20 lg:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* ENHANCED HERO SECTION */}
+      <section className="relative bg-gradient-to-br from-white via-primary-50/30 to-secondary-50 py-16 sm:py-20 lg:py-24 overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'radial-gradient(circle at 1px 1px, rgb(0 0 0 / 0.15) 1px, transparent 0)',
+            backgroundSize: '40px 40px'
+          }} />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center mb-12 lg:mb-16">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-secondary-900 mb-6 leading-tight">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium mb-6 shadow-sm">
+              <Sparkles className="w-4 h-4" />
+              <span>Fast, Reliable & Free Forever</span>
+            </div>
+            
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-secondary-900 mb-6 leading-tight">
               Free Website Screenshot Generator
               <br />
-              <span className="text-primary-600">Capture Any Website Instantly</span>
+              <span className="bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent">
+                Capture Any Website Instantly
+              </span>
             </h1>
-            <p className="text-lg sm:text-xl text-secondary-600 mb-8 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-secondary-600 mb-8 max-w-3xl mx-auto leading-relaxed">
               Generate professional, pixel-perfect website screenshots in seconds. Desktop, tablet, and mobile views. No registration required. Perfect for developers, marketers, designers, and QA teams.
             </p>
           </div>
 
-          {/* PROFESSIONAL SCREENSHOT FORM */}
+          {/* ENHANCED SCREENSHOT FORM */}
           <div className="max-w-4xl mx-auto">
-            <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md border border-secondary-200 p-6 sm:p-8">
+            <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-2xl border-2 border-secondary-200/50 p-6 sm:p-8 backdrop-blur-sm relative overflow-hidden">
+              {/* Subtle gradient overlay */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 via-primary-600 to-primary-500" />
               
               <div className="mb-6">
                 <h2 className="text-xl font-semibold text-secondary-900 mb-2">
@@ -214,36 +234,57 @@ export default function Home() {
 
               {/* Result Display */}
               {result && (
-                <div className="mt-6 p-6 bg-success-50 border border-success-200 rounded-lg">
+                <div className="mt-6 p-6 bg-gradient-to-br from-success-50 to-primary-50 border-2 border-success-300 rounded-xl shadow-lg">
                   <div className="flex items-center mb-4">
-                    <CheckCircle className="w-5 h-5 text-success-600 mr-2" />
-                    <h3 className="text-lg font-semibold text-success-900">Screenshot Generated Successfully</h3>
+                    <div className="w-10 h-10 bg-success-500 rounded-full flex items-center justify-center mr-3">
+                      <CheckCircle className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-success-900">Screenshot Generated!</h3>
+                      <p className="text-sm text-success-700">Your screenshot is ready to view and download</p>
+                    </div>
                   </div>
                   
                   <div className="space-y-4">
-                    {/* Preview Image */}
-                    <div className="bg-white p-2 rounded-lg border border-secondary-200">
+                    {/* Preview Image with Click to View */}
+                    <div 
+                      className="relative bg-white p-3 rounded-xl border-2 border-secondary-200 cursor-pointer hover:border-primary-400 transition-all duration-200 group overflow-hidden"
+                      onClick={() => setShowModal(true)}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end justify-center pb-6 z-10">
+                        <div className="bg-white/95 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg flex items-center gap-2">
+                          <Sparkles className="w-5 h-5 text-primary-600" />
+                          <span className="font-semibold text-secondary-900">Click to View Full Screenshot</span>
+                        </div>
+                      </div>
                       <img
                         src={result.imageUrl}
-                        alt="Generated screenshot"
-                        className="w-full h-auto rounded"
-                        style={{ maxHeight: '400px', objectFit: 'contain' }}
+                        alt="Generated screenshot preview"
+                        className="w-full h-auto rounded-lg shadow-md"
+                        style={{ maxHeight: '300px', objectFit: 'contain' }}
+                        loading="eager"
                       />
                     </div>
 
                     {/* Metadata */}
                     {result.metadata && (
-                      <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div>
-                          <span className="text-secondary-600">Size:</span>
-                          <span className="ml-2 font-medium text-secondary-900">
-                            {result.metadata.width} × {result.metadata.height}px
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div className="bg-white/80 backdrop-blur-sm p-3 rounded-lg border border-secondary-200">
+                          <span className="text-xs text-secondary-600 block mb-1">Dimensions</span>
+                          <span className="font-semibold text-secondary-900">
+                            {result.metadata.width} × {result.metadata.height}
                           </span>
                         </div>
-                        <div>
-                          <span className="text-secondary-600">File size:</span>
-                          <span className="ml-2 font-medium text-secondary-900">
+                        <div className="bg-white/80 backdrop-blur-sm p-3 rounded-lg border border-secondary-200">
+                          <span className="text-xs text-secondary-600 block mb-1">File Size</span>
+                          <span className="font-semibold text-secondary-900">
                             {formatFileSize(result.metadata.fileSize)}
+                          </span>
+                        </div>
+                        <div className="bg-white/80 backdrop-blur-sm p-3 rounded-lg border border-secondary-200 col-span-2 sm:col-span-1">
+                          <span className="text-xs text-secondary-600 block mb-1">Format</span>
+                          <span className="font-semibold text-secondary-900 uppercase">
+                            {format}
                           </span>
                         </div>
                       </div>
@@ -251,28 +292,19 @@ export default function Home() {
 
                     {/* Actions */}
                     <div className="flex flex-col sm:flex-row gap-3">
-                      <button
-                        onClick={() => {
-                          // Use downloadUrl if available, otherwise use imageUrl
-                          const downloadLink = result.downloadUrl || result.imageUrl || '';
-                          const link = document.createElement('a');
-                          link.href = downloadLink;
-                          link.download = `screenshot-${Date.now()}.${format}`;
-                          document.body.appendChild(link);
-                          link.click();
-                          document.body.removeChild(link);
-                        }}
-                        className="flex-1"
+                      <Button 
+                        variant="primary" 
+                        size="lg" 
+                        className="flex-1 shadow-lg hover:shadow-xl transition-shadow"
+                        onClick={() => setShowModal(true)}
                       >
-                        <Button variant="primary" size="md" className="w-full">
-                          <Download className="w-4 h-4 mr-2" />
-                          Download Screenshot
-                        </Button>
-                      </button>
+                        <Sparkles className="w-5 h-5 mr-2" />
+                        View Full Screenshot
+                      </Button>
                       
                       {!session && (
                         <Link href="/auth/signup" className="flex-1">
-                          <Button variant="outline" size="md" className="w-full">
+                          <Button variant="outline" size="lg" className="w-full">
                             Sign Up to Save
                           </Button>
                         </Link>
@@ -280,6 +312,18 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
+              )}
+
+              {/* Screenshot Modal */}
+              {result && (
+                <ScreenshotModal
+                  isOpen={showModal}
+                  onClose={() => setShowModal(false)}
+                  imageUrl={result.imageUrl || ''}
+                  downloadUrl={result.downloadUrl}
+                  format={format}
+                  metadata={result.metadata}
+                />
               )}
             </form>
           </div>
