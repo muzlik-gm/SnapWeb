@@ -1,0 +1,152 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Professional Design System Base Styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  body {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    color: theme('colors.secondary.900');
+    background-color: theme('colors.white');
+  }
+
+  /* Professional focus styles for accessibility */
+  *:focus-visible {
+    outline: 2px solid theme('colors.primary.600');
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Remove default button styles */
+  button {
+    font-family: inherit;
+  }
+
+  /* Professional form elements */
+  input, textarea, select {
+    font-family: inherit;
+  }
+
+  /* Professional heading styles */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: theme('fontWeight.semibold');
+    color: theme('colors.secondary.900');
+    line-height: 1.2;
+  }
+
+  /* Professional link styles */
+  a {
+    color: theme('colors.primary.600');
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  a:hover {
+    color: theme('colors.primary.700');
+  }
+}
+
+/* Custom component styles */
+@layer components {
+  /* Prose styles for blog content */
+  .prose {
+    @apply text-gray-700 leading-relaxed;
+  }
+  
+  .prose h2 {
+    @apply text-2xl font-bold text-gray-900 mt-8 mb-4;
+  }
+  
+  .prose h3 {
+    @apply text-xl font-semibold text-gray-900 mt-6 mb-3;
+  }
+  
+  .prose p {
+    @apply mb-4;
+  }
+  
+  .prose ul {
+    @apply list-disc list-inside mb-4 space-y-2;
+  }
+  
+  .prose ol {
+    @apply list-decimal list-inside mb-4 space-y-2;
+  }
+  
+  .prose pre {
+    @apply bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto mb-4;
+  }
+  
+  .prose code {
+    @apply bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm;
+  }
+  
+  .prose pre code {
+    @apply bg-transparent text-green-400 p-0;
+  }
+  
+  /* Line clamp utility */
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Aspect ratio utilities */
+  .aspect-w-16 {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+  }
+  
+  .aspect-w-16 > * {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  /* Animation utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Smooth transitions */
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

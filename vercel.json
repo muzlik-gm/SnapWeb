@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "pages/api/screenshot.ts": {
+      "memory": 512,
+      "maxDuration": 30
+    }
+  },
+  "build": {
+    "env": {
+      "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD": "true"
+    }
+  }
+}

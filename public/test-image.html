@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Test</title>
+</head>
+<body>
+    <h1>Screenshot Image Test</h1>
+    <p>If you can see the image below, the file serving works:</p>
+    <img src="/api/serve-screenshot?filename=screenshot_1762335532668_c5ttextwer9.png" alt="Test" style="max-width: 800px; border: 2px solid red;">
+    <p>Image URL: /api/serve-screenshot?filename=screenshot_1762335532668_c5ttextwer9.png</p>
+    
+    <script>
+        const img = document.querySelector('img');
+        img.onload = () => console.log('✅ Image loaded successfully!');
+        img.onerror = () => console.error('❌ Image failed to load!');
+    </script>
+</body>
+</html>
