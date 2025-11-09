@@ -33,6 +33,44 @@ async function applyStealth(page: Page) {
   });
 }
 
+// A list of common tracking, ad, and analytics domains to block for performance
+const blockedDomains = [
+  'googletagmanager.com',
+  'google-analytics.com',
+  'googlesyndication.com',
+  'adservice.google.com',
+  'doubleclick.net',
+  'facebook.net',
+  'fbcdn.net',
+  'connect.facebook.net',
+  'analytics.twitter.com',
+  'youtube.com',
+  'scorecardresearch.com',
+  'adinjector.net',
+  'adsrvr.org',
+  'amazon-adsystem.com',
+  'criteo.com',
+  'hotjar.com',
+  'mixpanel.com',
+  'optimizely.com',
+  'quantserve.com',
+  'segment.io',
+  'vwo.com',
+  'clarity.ms',
+  'bing.com',
+  'adobedtm.com',
+];
+
+async function setupRequestBlocking(page: Page) {
+  await page.route('**/*', (route) => {
+    const url = route.request().url();
+    if (blockedDomains.some(domain => url.includes(domain))) {
+      return route.abort();
+    }
+    return route.continue();
+  });
+}
+
 // Environment helpers
 function isServerlessEnv() {
   return Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
@@ -258,6 +296,7 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
 
   try {
     await applyStealth(page);
+    await setupRequestBlocking(page);
     await disableLazyLoading(page);
     await bypassIntersectionObserver(page);
 
@@ -284,19 +323,16 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
       }
     }
 
-    // First wait for basic content
-    try {
-      const renderTimeout = Math.min(8000, Math.max(1000, timeLeft() - 18000));
-      await waitForContentRendered(page, { textLen: 100, visibleEls: 50, timeout: renderTimeout });
-      console.log(`[Screenshot] Basic content rendered`);
-    } catch (e) {
-      console.log(`[Screenshot] Basic content wait timeout`);
+    // Scroll to trigger lazy-loaded content
+    if (fullPage) {
+      console.log(`[Screenshot] Scrolling to trigger lazy-loaded content...`);
+      await autoScroll(page, 150);
     }
 
     // Wait for network to be truly idle (all API calls done)
     console.log(`[Screenshot] Waiting for network idle...`);
     try {
-      const netIdleTimeout = Math.min(5000, Math.max(1000, timeLeft() - 16000));
+      const netIdleTimeout = Math.min(8000, Math.max(1000, timeLeft() - 16000));
       await page.waitForLoadState('networkidle', { timeout: netIdleTimeout });
       console.log(`[Screenshot] Network idle reached`);
     } catch {
