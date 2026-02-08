@@ -44,12 +44,21 @@ export default function Home() {
         }),
       });
 
+      // 1. Check if the response is valid JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('Non-JSON response received:', text);
+        if (response.status === 504) {
+          throw new Error('Screenshot generation timed out. The website might be too slow or complex.');
+        }
+        throw new Error(`Server returned an error (${response.status}). Please try again later.`);
+      }
+
       const data = await response.json();
 
       if (data.success && data.data) {
         console.log('Screenshot API Response:', data);
-        console.log('Image URL:', data.data.imageUrl);
-        console.log('Full data.data:', JSON.stringify(data.data, null, 2));
         setResult(data.data);
         if (typeof window !== 'undefined' && (window as any).gtag) {
           (window as any).gtag('event', 'generate_clicked', {
@@ -60,8 +69,9 @@ export default function Home() {
       } else {
         setError(data.error || data.message || 'Failed to generate screenshot');
       }
-    } catch (err) {
-      setError('Network error. Please try again.');
+    } catch (err: any) {
+      console.error('Submit error:', err);
+      setError(err.message || 'Network error. Please try again.');
     } finally {
       setLoading(false);
     }

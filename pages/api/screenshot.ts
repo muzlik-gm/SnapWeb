@@ -136,37 +136,30 @@ export default async function handler(
     // Generate screenshot
     const result = await generateScreenshot(requestData);
 
-    // Convert buffer to base64 data URL for immediate display
-    const base64Image = result.buffer.toString('base64');
-    const mimeType = requestData.format === 'png' ? 'image/png' : 
-                     requestData.format === 'jpeg' ? 'image/jpeg' : 'image/webp';
-    const dataUrl = `data:${mimeType};base64,${base64Image}`;
-
-    // Also save screenshot to file system for download
+    // Save screenshot to file system
     const timestamp = Date.now();
     const filename = `screenshot_${timestamp}_${Math.random().toString(36).substring(2)}.${requestData.format}`;
     // Use /tmp on Vercel (writable), public/screenshots locally
     const isVercel = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
     const screenshotsDir = isVercel ? '/tmp/screenshots' : path.join(process.cwd(), 'public', 'screenshots');
 
-    // Do file/database operations asynchronously (don't wait)
-    // This allows us to return the response immediately
+    // Create directory if it doesn't exist
+    try {
+      await fs.access(screenshotsDir);
+    } catch {
+      await fs.mkdir(screenshotsDir, { recursive: true });
+    }
+
+    // Save to file system - We MUST await this so it's ready for immediate download/serving
+    const filepath = path.join(screenshotsDir, filename);
+    await fs.writeFile(filepath, result.buffer);
+
+    // Save to database and other tasks can happen in background
     Promise.all([
-      // Save to file system
-      (async () => {
-        try {
-          await fs.access(screenshotsDir);
-        } catch {
-          await fs.mkdir(screenshotsDir, { recursive: true });
-        }
-        const filepath = path.join(screenshotsDir, filename);
-        await fs.writeFile(filepath, result.buffer);
-      })(),
-      
       // Save to database
       (async () => {
         const screenshotData = {
-          url: `/screenshots/${filename}`,
+          url: `/api/serve-screenshot?filename=${filename}`,
           filename,
           original_url: requestData.url,
           metadata: result.metadata,
@@ -199,19 +192,21 @@ export default async function handler(
         req.headers['user-agent']
       ) : Promise.resolve(),
     ]).catch(err => {
-      // Log errors but don't block response
       console.error('Background operation error:', err);
     });
 
-    // Return success response with base64 data URL
+    const serveUrl = `/api/serve-screenshot?filename=${filename}`;
+
+    // Return success response - We use serveUrl for both imageUrl and downloadUrl
+    // to stay under Vercel's 4MB response payload limit (base64 is too large for full-page)
     const responseData = {
-      id: filename, // Use filename as ID since we're not waiting for DB
-      imageUrl: dataUrl, // Use base64 data URL for immediate display
-      downloadUrl: `/api/serve-screenshot?filename=${filename}`, // Separate download URL
+      id: filename,
+      imageUrl: serveUrl,
+      downloadUrl: serveUrl,
       metadata: result.metadata,
     };
     
-    console.log('Sending screenshot response with data URL (length:', dataUrl.length, ')');
+    console.log('Sending screenshot response with serve URL:', serveUrl);
     
     res.status(200).json(
       createApiResponse(true, responseData, undefined, 'Screenshot generated successfully')

@@ -84,7 +84,9 @@ async function handleDeleteScreenshot(
 
     // Delete file from filesystem
     try {
-      const filepath = path.join(process.cwd(), 'public', 'screenshots', screenshot.filename);
+      const isVercel = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+      const screenshotsDir = isVercel ? '/tmp/screenshots' : path.join(process.cwd(), 'public', 'screenshots');
+      const filepath = path.join(screenshotsDir, screenshot.filename);
       await fs.unlink(filepath);
     } catch (fileError) {
       console.error('File deletion error:', fileError);
