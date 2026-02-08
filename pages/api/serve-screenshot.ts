@@ -28,7 +28,10 @@ export default async function handler(
   }
 
   try {
-    const filepath = path.join(process.cwd(), 'public', 'screenshots', filename);
+    // Consistent with screenshot generation path logic
+    const isVercel = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+    const screenshotsDir = isVercel ? '/tmp/screenshots' : path.join(process.cwd(), 'public', 'screenshots');
+    const filepath = path.join(screenshotsDir, filename);
     
     // Check if file exists
     await fs.access(filepath);

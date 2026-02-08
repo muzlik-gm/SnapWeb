@@ -43,6 +43,17 @@ export default function WebsiteScreenshot() {
         }),
       });
 
+      // 1. Check if the response is valid JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('Non-JSON response received:', text);
+        if (response.status === 504) {
+          throw new Error('Screenshot generation timed out. The website might be too slow or complex.');
+        }
+        throw new Error(`Server returned an error (${response.status}). Please try again later.`);
+      }
+
       const data = await response.json();
 
       if (data.success && data.data) {
@@ -51,8 +62,9 @@ export default function WebsiteScreenshot() {
       } else {
         setError(data.error || data.message || 'Failed to generate website screenshot');
       }
-    } catch (err) {
-      setError('Network error. Please try again.');
+    } catch (err: any) {
+      console.error('Submit error:', err);
+      setError(err.message || 'Network error. Please try again.');
     } finally {
       setLoading(false);
     }
