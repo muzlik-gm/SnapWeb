@@ -231,7 +231,7 @@ export default function Screenshots() {
                       <p>{formatFileSize(screenshot.metadata.fileSize)} • {screenshot.metadata.width} × {screenshot.metadata.height}</p>
                       <p>{screenshot.downloads} downloads</p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-3">
                       <Button
                         size="sm"
                         onClick={() => handleDownload(screenshot)}

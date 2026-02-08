@@ -85,7 +85,7 @@ export default function Pricing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <Logo size="md" />
-            <div className="flex gap-3">
+            <div className="flex items-center gap-4">
               {session ? (
                 <>
                   <Link href="/dashboard">
@@ -231,13 +231,13 @@ export default function Pricing() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href={session ? '/dashboard' : '/auth/signup'}>
-              <Button size="lg">
+              <Button size="lg" className="w-full sm:w-auto">
                 {session ? 'Go to Dashboard' : 'Start Free Trial'}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
             <Link href="/contact">
-              <Button variant="outline" size="lg">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 Contact Sales
               </Button>
             </Link>
