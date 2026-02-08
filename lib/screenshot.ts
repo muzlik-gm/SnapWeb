@@ -61,12 +61,42 @@ const blockedDomains = [
   'adobedtm.com',
 ];
 
+const blockedDomainsSet = new Set(blockedDomains);
+const blockedResourceTypes = new Set(['media', 'eventsource', 'websocket']);
+
 async function setupRequestBlocking(page: Page) {
   await page.route('**/*', (route) => {
-    const url = route.request().url();
-    if (blockedDomains.some(domain => url.includes(domain))) {
+    const request = route.request();
+    const resourceType = request.resourceType();
+
+    // Block non-essential resource types to save bandwidth and time
+    if (blockedResourceTypes.has(resourceType)) {
       return route.abort();
     }
+
+    const urlStr = request.url();
+    try {
+      const url = new URL(urlStr);
+      const hostname = url.hostname.toLowerCase();
+
+      // Efficiently check for exact match or subdomain match
+      let domain = hostname;
+      while (domain.includes('.')) {
+        if (blockedDomainsSet.has(domain)) {
+          return route.abort();
+        }
+        domain = domain.substring(domain.indexOf('.') + 1);
+      }
+      if (blockedDomainsSet.has(domain)) {
+        return route.abort();
+      }
+    } catch {
+      // Fallback for non-standard URLs
+      if (blockedDomains.some(d => urlStr.includes(d))) {
+        return route.abort();
+      }
+    }
+
     return route.continue();
   });
 }
@@ -133,6 +163,12 @@ async function bypassIntersectionObserver(page: Page) {
 // Aggressively hydrate common lazy media attributes after navigation
 async function hydrateLazyMedia(page: Page) {
   await page.evaluate(() => {
+    // Proactively convert existing lazy assets to eager
+    document.querySelectorAll('img[loading="lazy"]').forEach((img: any) => {
+      img.setAttribute('loading', 'eager');
+      img.loading = 'eager';
+    });
+
     // Images with data-src / data-srcset
     Array.from(document.querySelectorAll('img[data-src], img[data-lazy-src]') as NodeListOf<HTMLImageElement>).forEach((img) => {
       const ds = img.getAttribute('data-src') || img.getAttribute('data-lazy-src');
@@ -303,11 +339,7 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
     console.log(`[Screenshot] Navigating to: ${sanitizedUrl}`);
     await page.goto(sanitizedUrl, { waitUntil: "load", timeout: Math.min(timeout, timeLeft()) });
 
-    // Proactively convert existing lazy assets to eager
-    await page.evaluate(() => {
-      // Images
-      document.querySelectorAll('img[loading="lazy"]').forEach((img: any) => img.setAttribute('loading', 'eager'));
-    });
+    // Proactively convert existing lazy assets and hydrate media
     await hydrateLazyMedia(page);
 
     console.log(`[Screenshot] Waiting for content to render...`);
@@ -326,7 +358,7 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
     // Scroll to trigger lazy-loaded content
     if (fullPage) {
       console.log(`[Screenshot] Scrolling to trigger lazy-loaded content...`);
-      await autoScroll(page, 150);
+      await autoScroll(page, 100);
     }
 
     // Wait for network to be truly idle (all API calls done)
@@ -398,7 +430,7 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
     if (fullPage) {
       console.log(`[Screenshot] Scrolling for lazy-loaded content...`);
       // Fast banded scroll (tight budget)
-      await autoScroll(page, 150);
+      await autoScroll(page, 100);
       // Brief settle for resources
       const settleTimeout = Math.min(2500, Math.max(500, timeLeft() - 6000));
       await page.waitForLoadState('networkidle', { timeout: settleTimeout }).catch(() => {});
