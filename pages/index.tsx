@@ -104,20 +104,15 @@ export default function Home() {
               <div className="space-y-4 mb-6">
                 
                 {/* URL Input */}
-                <div>
-                  <label htmlFor="url" className="block text-sm font-medium text-secondary-900 mb-1.5">
-                    Website URL
-                  </label>
-                  <input
-                    type="text"
-                    id="url"
-                    value={url}
-                    onChange={(e) => setUrl(e.target.value)}
-                    placeholder="example.com or https://example.com"
-                    required
-                    className="w-full h-11 px-3 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent transition-colors"
-                  />
-                </div>
+                <Input
+                  label="Website URL"
+                  type="text"
+                  id="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="example.com or https://example.com"
+                  required
+                />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Device Select */}

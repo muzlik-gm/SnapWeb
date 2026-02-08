@@ -1,0 +1,3 @@
+## 2024-05-15 - [Accessible Reusable Input Pattern]
+**Learning:** Found that the project's core `Input` component was missing proper linkage between labels and inputs, as well as ARIA attributes for errors and helper texts. This pattern is common in early-stage projects but significantly hinders screen reader users and general usability (e.g., clicking a label should focus the input).
+**Action:** Implemented a robust `Input` component pattern using React's `useId` for automatic, unique ID generation. Linked labels via `htmlFor`, and connected errors/helper texts using `aria-describedby` and `aria-invalid`. This pattern should be standard for all future form components in this repository.
