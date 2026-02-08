@@ -201,9 +201,15 @@ export const pricingTiers = [
 export function generateApiKey(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = 'sk_';
+
+  // Use cryptographically secure random values (available in Node.js 17+ and modern browsers)
+  const bytes = new Uint8Array(32);
+  globalThis.crypto.getRandomValues(bytes);
+
   for (let i = 0; i < 32; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
+    result += chars.charAt(bytes[i] % chars.length);
   }
+
   return result;
 }
 
