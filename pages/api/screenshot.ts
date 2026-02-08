@@ -211,7 +211,7 @@ export default async function handler(
     const responseData = {
       id: filename,
       imageUrl, // Data URL for small images, serve URL for large ones
-      downloadUrl: serveUrl, // Always use serve URL for downloads
+      downloadUrl: imageUrl, // Use data URL if available for better reliability on Vercel
       metadata: result.metadata,
     };
     

@@ -257,12 +257,15 @@ export default function Home() {
                     {/* Actions */}
                     <div className="flex flex-col sm:flex-row gap-4">
                       <Button
+                        type="button"
                         variant="primary"
                         size="md"
                         className="flex-1 w-full"
                         onClick={() => {
-                          // Use downloadUrl if available, otherwise use imageUrl
-                          const downloadLink = result.downloadUrl || result.imageUrl || '';
+                          // Prefer data URL for reliability if available
+                          const isDataUrl = result.imageUrl?.startsWith('data:');
+                          const downloadLink = isDataUrl ? result.imageUrl : (result.downloadUrl || result.imageUrl || '');
+
                           const link = document.createElement('a');
                           link.href = downloadLink;
                           link.download = `screenshot-${Date.now()}.${format}`;
@@ -277,7 +280,7 @@ export default function Home() {
                       
                       {!session && (
                         <Link href="/auth/signup" className="flex-1">
-                          <Button variant="outline" size="md" className="w-full">
+                          <Button type="button" variant="outline" size="md" className="w-full">
                             Sign Up to Save
                           </Button>
                         </Link>
