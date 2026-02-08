@@ -264,7 +264,7 @@ export default function Home() {
                         onClick={() => {
                           // Prefer data URL for reliability if available
                           const isDataUrl = result.imageUrl?.startsWith('data:');
-                          const downloadLink = isDataUrl ? result.imageUrl : (result.downloadUrl || result.imageUrl || '');
+                          const downloadLink = (isDataUrl ? result.imageUrl : (result.downloadUrl || result.imageUrl)) || '';
 
                           const link = document.createElement('a');
                           link.href = downloadLink;
