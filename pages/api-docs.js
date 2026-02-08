@@ -73,7 +73,7 @@ print(response.json())`,
             {/* Sidebar Navigation */}
             <div className="lg:col-span-1">
               <nav className="sticky top-8">
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   <li><a href="#authentication" className="text-blue-600 hover:text-blue-800">Authentication</a></li>
                   <li><a href="#endpoints" className="text-blue-600 hover:text-blue-800">Endpoints</a></li>
                   <li><a href="#parameters" className="text-blue-600 hover:text-blue-800">Parameters</a></li>

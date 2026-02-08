@@ -245,8 +245,11 @@ export default function Home() {
                     )}
 
                     {/* Actions */}
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <button
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <Button
+                        variant="primary"
+                        size="md"
+                        className="flex-1 w-full"
                         onClick={() => {
                           // Use downloadUrl if available, otherwise use imageUrl
                           const downloadLink = result.downloadUrl || result.imageUrl || '';
@@ -257,13 +260,10 @@ export default function Home() {
                           link.click();
                           document.body.removeChild(link);
                         }}
-                        className="flex-1"
                       >
-                        <Button variant="primary" size="md" className="w-full">
-                          <Download className="w-4 h-4 mr-2" />
-                          Download Screenshot
-                        </Button>
-                      </button>
+                        <Download className="w-4 h-4 mr-2" />
+                        Download Screenshot
+                      </Button>
                       
                       {!session && (
                         <Link href="/auth/signup" className="flex-1">
