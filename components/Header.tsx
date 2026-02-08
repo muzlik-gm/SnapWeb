@@ -267,14 +267,14 @@ export default function Header() {
               </button>
             </div>
 
-            <div className="px-4 py-6 overflow-y-auto max-h-[calc(100vh-80px)]">
+            <div className="px-4 py-6 overflow-y-auto max-h-[calc(100vh-80px)] flex flex-col gap-8">
               {/* Mobile Navigation */}
-              <nav className="space-y-3">
+              <nav className="flex flex-col gap-2">
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="block px-3 py-2 text-base font-medium text-secondary-700 hover:text-secondary-900 hover:bg-secondary-50 rounded-lg transition-colors"
+                    className="block px-3 py-3 text-base font-medium text-secondary-700 hover:text-secondary-900 hover:bg-secondary-50 rounded-lg transition-colors border border-transparent hover:border-secondary-200"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.name}
@@ -283,9 +283,9 @@ export default function Header() {
               </nav>
 
               {/* Mobile Auth */}
-              <div className="mt-8 pt-8 border-t border-secondary-200">
+              <div className="pt-8 border-t border-secondary-200">
                 {session ? (
-                  <div className="space-y-4">
+                  <div className="flex flex-col gap-4">
                     <div className="flex items-center space-x-3 px-3 py-2 bg-secondary-50 rounded-lg">
                       {session.user?.image ? (
                         <img
@@ -306,7 +306,7 @@ export default function Header() {
                       </div>
                     </div>
                     
-                    <div className="space-y-3">
+                    <div className="flex flex-col gap-3">
                       <Link
                         href="/dashboard"
                         className="flex items-center px-3 py-2 text-sm font-medium text-secondary-700 hover:text-secondary-900 hover:bg-secondary-50 rounded-lg"
@@ -336,7 +336,7 @@ export default function Header() {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="flex flex-col gap-4">
                     <Link
                       href="/auth/signin"
                       onClick={() => setMobileMenuOpen(false)}

@@ -478,7 +478,7 @@ export default function Home() {
             <Link href="/auth/signup">
               <Button 
                 size="lg" 
-                className="bg-white text-primary-600 hover:bg-secondary-50 border-white"
+                className="w-full sm:w-auto bg-white text-primary-600 hover:bg-secondary-50 border-white"
               >
                 Start Free Now
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -489,7 +489,7 @@ export default function Home() {
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="text-white border-white hover:bg-primary-700"
+                className="w-full sm:w-auto text-white border-white hover:bg-primary-700"
               >
                 View Pricing
               </Button>
