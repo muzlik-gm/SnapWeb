@@ -104,20 +104,15 @@ export default function Home() {
               <div className="space-y-4 mb-6">
                 
                 {/* URL Input */}
-                <div>
-                  <label htmlFor="url" className="block text-sm font-medium text-secondary-900 mb-1.5">
-                    Website URL
-                  </label>
-                  <input
-                    type="text"
-                    id="url"
-                    value={url}
-                    onChange={(e) => setUrl(e.target.value)}
-                    placeholder="example.com or https://example.com"
-                    required
-                    className="w-full h-11 px-3 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent transition-colors"
-                  />
-                </div>
+                <Input
+                  label="Website URL"
+                  type="text"
+                  id="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="example.com or https://example.com"
+                  required
+                />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Device Select */}
@@ -250,8 +245,11 @@ export default function Home() {
                     )}
 
                     {/* Actions */}
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <button
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <Button
+                        variant="primary"
+                        size="md"
+                        className="flex-1 w-full"
                         onClick={() => {
                           // Use downloadUrl if available, otherwise use imageUrl
                           const downloadLink = result.downloadUrl || result.imageUrl || '';
@@ -262,13 +260,10 @@ export default function Home() {
                           link.click();
                           document.body.removeChild(link);
                         }}
-                        className="flex-1"
                       >
-                        <Button variant="primary" size="md" className="w-full">
-                          <Download className="w-4 h-4 mr-2" />
-                          Download Screenshot
-                        </Button>
-                      </button>
+                        <Download className="w-4 h-4 mr-2" />
+                        Download Screenshot
+                      </Button>
                       
                       {!session && (
                         <Link href="/auth/signup" className="flex-1">

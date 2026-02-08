@@ -32,7 +32,7 @@ export default function Docs() {
             <div className="lg:col-span-1">
               <nav className="sticky top-8">
                 <h3 className="font-semibold text-gray-900 mb-4">Quick Navigation</h3>
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   <li><a href="#getting-started" className="text-blue-600 hover:text-blue-800">Getting Started</a></li>
                   <li><a href="#web-interface" className="text-blue-600 hover:text-blue-800">Web Interface</a></li>
                   <li><a href="#device-options" className="text-blue-600 hover:text-blue-800">Device Options</a></li>

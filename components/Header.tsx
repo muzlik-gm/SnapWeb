@@ -4,7 +4,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Button } from './ui/Button';
 import { Logo } from './Logo';
-import { Menu, X, User, LayoutDashboard, Image, CreditCard, LogOut } from 'lucide-react';
+import {
+  Menu, X, User, LayoutDashboard, Image, CreditCard, LogOut,
+  Code, Settings, HelpCircle, AlertCircle
+} from 'lucide-react';
 
 export default function Header() {
   const { data: session, status } = useSession();
@@ -138,7 +141,7 @@ export default function Header() {
                             className="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50 transition-colors"
                             onClick={() => setDropdownOpen(false)}
                           >
-                            <Image className="w-4 h-4 mr-3 text-secondary-500" />
+                            <Code className="w-4 h-4 mr-3 text-secondary-500" />
                             API builder
                           </Link>
                           <Link
@@ -146,7 +149,7 @@ export default function Header() {
                             className="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50 transition-colors"
                             onClick={() => setDropdownOpen(false)}
                           >
-                            <Image className="w-4 h-4 mr-3 text-secondary-500" />
+                            <User className="w-4 h-4 mr-3 text-secondary-500" />
                             Profile
                           </Link>
                           <Link
@@ -170,7 +173,7 @@ export default function Header() {
                             className="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50 transition-colors"
                             onClick={() => setDropdownOpen(false)}
                           >
-                            <Image className="w-4 h-4 mr-3 text-secondary-500" />
+                            <AlertCircle className="w-4 h-4 mr-3 text-secondary-500" />
                             Custom error images
                           </Link>
                           <Link
@@ -178,7 +181,7 @@ export default function Header() {
                             className="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50 transition-colors"
                             onClick={() => setDropdownOpen(false)}
                           >
-                            <Image className="w-4 h-4 mr-3 text-secondary-500" />
+                            <Settings className="w-4 h-4 mr-3 text-secondary-500" />
                             Settings
                           </Link>
                           <Link
@@ -186,7 +189,7 @@ export default function Header() {
                             className="flex items-center px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50 transition-colors"
                             onClick={() => setDropdownOpen(false)}
                           >
-                            <Image className="w-4 h-4 mr-3 text-secondary-500" />
+                            <HelpCircle className="w-4 h-4 mr-3 text-secondary-500" />
                             How it works
                           </Link>
                           <Link
@@ -266,7 +269,7 @@ export default function Header() {
 
             <div className="px-4 py-6 overflow-y-auto max-h-[calc(100vh-80px)]">
               {/* Mobile Navigation */}
-              <nav className="space-y-1">
+              <nav className="space-y-3">
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
@@ -280,7 +283,7 @@ export default function Header() {
               </nav>
 
               {/* Mobile Auth */}
-              <div className="mt-6 pt-6 border-t border-secondary-200">
+              <div className="mt-8 pt-8 border-t border-secondary-200">
                 {session ? (
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3 px-3 py-2 bg-secondary-50 rounded-lg">
@@ -303,7 +306,7 @@ export default function Header() {
                       </div>
                     </div>
                     
-                    <div className="space-y-1">
+                    <div className="space-y-3">
                       <Link
                         href="/dashboard"
                         className="flex items-center px-3 py-2 text-sm font-medium text-secondary-700 hover:text-secondary-900 hover:bg-secondary-50 rounded-lg"
@@ -333,7 +336,7 @@ export default function Header() {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <Link
                       href="/auth/signin"
                       onClick={() => setMobileMenuOpen(false)}

@@ -96,7 +96,7 @@ export const ScreenshotModal: React.FC<ScreenshotModalProps> = ({
 
           <div className="flex items-center gap-2">
             {/* Zoom Controls */}
-            <div className="hidden md:flex items-center gap-1 mr-2">
+            <div className="hidden md:flex items-center gap-2 mr-2">
               <button
                 onClick={() => setZoom(Math.max(50, zoom - 25))}
                 className="p-2 hover:bg-secondary-100 rounded-lg transition-colors"

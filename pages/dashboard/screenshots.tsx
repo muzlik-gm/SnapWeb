@@ -137,15 +137,15 @@ export default function Screenshots() {
                 {data?.pagination.total || 0} screenshots total
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/dashboard">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="w-full sm:w-auto">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to Dashboard
                 </Button>
               </Link>
               <Link href="/">
-                <Button size="sm">
+                <Button size="sm" className="w-full sm:w-auto">
                   <Plus className="w-4 h-4 mr-2" />
                   New Screenshot
                 </Button>
