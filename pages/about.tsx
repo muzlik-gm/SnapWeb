@@ -234,7 +234,7 @@ export default function About() {
                 onClick={() => window.location.href = '/pricing'}
                 variant="outline"
                 size="lg"
-                className="text-white border-white hover:bg-white hover:text-secondary-900"
+                className="text-white border-white bg-transparent hover:bg-white hover:text-secondary-900"
               >
                 View Pricing
               </Button>

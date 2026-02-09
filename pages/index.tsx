@@ -502,7 +502,7 @@ export default function Home() {
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="w-full sm:w-auto text-white border-white hover:bg-primary-700"
+                className="w-full sm:w-auto text-white border-white bg-transparent hover:bg-primary-700"
               >
                 View Pricing
               </Button>

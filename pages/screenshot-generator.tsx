@@ -377,7 +377,7 @@ export default function ScreenshotGenerator() {
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="text-white border-white hover:bg-primary-700"
+                className="text-white border-white bg-transparent hover:bg-primary-700"
               >
                 View Pricing
               </Button>
