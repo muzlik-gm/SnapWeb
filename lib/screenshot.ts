@@ -305,7 +305,10 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
   const maxRuntime = serverless ? Math.min(timeout, 28000) : timeout;
   const startTs = Date.now();
   const timeLeft = () => Math.max(0, maxRuntime - (Date.now() - startTs));
-  const wait = async (ms: number) => { await page.waitForTimeout(Math.max(0, Math.min(ms, timeLeft()))); };
+  const wait = async (ms: number) => {
+    const t = Math.max(0, Math.min(ms, timeLeft()));
+    if (t > 0) await page.waitForTimeout(t);
+  };
 
   // Get device configuration
   const deviceConfig = deviceConfigs[device];
@@ -337,7 +340,8 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
     await bypassIntersectionObserver(page);
 
     console.log(`[Screenshot] Navigating to: ${sanitizedUrl}`);
-    await page.goto(sanitizedUrl, { waitUntil: "load", timeout: Math.min(timeout, timeLeft()) });
+    const navTimeout = Math.max(5000, timeLeft()); // Ensure at least 5s for navigation
+    await page.goto(sanitizedUrl, { waitUntil: "load", timeout: navTimeout });
 
     // Proactively convert existing lazy assets and hydrate media
     await hydrateLazyMedia(page);
@@ -347,7 +351,7 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
     // Optional: wait for a specific selector if provided
     if (options && (options as any).waitForSelector) {
       try {
-        const selTimeout = Math.min(6000, Math.max(1000, timeLeft() - 20000));
+        const selTimeout = Math.max(1000, Math.min(6000, timeLeft() - 15000));
         await page.waitForSelector((options as any).waitForSelector, { state: 'visible', timeout: selTimeout });
         console.log(`[Screenshot] waitForSelector satisfied`);
       } catch {
@@ -364,7 +368,7 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
     // Wait for network to be truly idle (all API calls done)
     console.log(`[Screenshot] Waiting for network idle...`);
     try {
-      const netIdleTimeout = Math.min(8000, Math.max(1000, timeLeft() - 16000));
+      const netIdleTimeout = Math.max(1000, Math.min(8000, timeLeft() - 12000));
       await page.waitForLoadState('networkidle', { timeout: netIdleTimeout });
       console.log(`[Screenshot] Network idle reached`);
     } catch {
@@ -402,7 +406,7 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
     console.log(`[Screenshot] Content check:`, contentCheck);
 
     console.log(`[Screenshot] Waiting for fonts and images...`);
-    await waitForFontsAndImages(page, Math.min(4000, Math.max(1000, timeLeft() - 14000)));
+    await waitForFontsAndImages(page, Math.max(1000, Math.min(4000, timeLeft() - 10000)));
     
     // Extra wait to ensure fonts are actually rendered
     await page.waitForTimeout(1000);
@@ -410,6 +414,7 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
     // Wait for specific content indicators (headings, paragraphs beyond hero)
     console.log(`[Screenshot] Checking for full page content...`);
     try {
+      const fullPageTimeout = Math.max(1000, Math.min(5000, timeLeft() - 8000));
       await page.waitForFunction(
         () => {
           const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6').length;
@@ -417,7 +422,7 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
           const sections = document.querySelectorAll('section, article, div[class*="section"]').length;
           return headings >= 3 && paragraphs >= 5 && sections >= 2;
         },
-        { timeout: Math.min(5000, Math.max(1000, timeLeft() - 12000)) }
+        { timeout: fullPageTimeout }
       );
       console.log(`[Screenshot] Full page content detected`);
     } catch {
@@ -518,24 +523,31 @@ export async function generateScreenshot(options: ScreenshotOptions): Promise<Sc
     await browser.close();
 
     if (error instanceof Error) {
-      if (error.message.includes('Timeout') || error.message.includes('timeout')) {
+      const msg = error.message.toLowerCase();
+      if (msg.includes('timeout')) {
         throw new AppError('Screenshot generation timed out. The website may be slow or unresponsive.', 408, 'TIMEOUT');
       }
-      if (error.message.includes('net::ERR_NAME_NOT_RESOLVED')) {
+      if (msg.includes('target closed') || msg.includes('browser has been closed') || msg.includes('crash')) {
+        throw new AppError('The browser crashed while loading this website. It may be too complex or memory-intensive.', 500, 'BROWSER_CRASH');
+      }
+      if (msg.includes('net::err_name_not_resolved')) {
         throw new AppError('Website not found. Please check the URL and try again.', 404, 'SITE_NOT_FOUND');
       }
-      if (error.message.includes('net::ERR_CONNECTION_REFUSED')) {
+      if (msg.includes('net::err_connection_refused')) {
         throw new AppError('Connection refused. The website may be down or blocking our service.', 503, 'CONNECTION_REFUSED');
       }
-      if (error.message.includes('net::ERR_EMPTY_RESPONSE')) {
+      if (msg.includes('net::err_empty_response')) {
         throw new AppError('The website returned an empty response. It may be misconfigured or down.', 502, 'EMPTY_RESPONSE');
       }
-      if (error.message.includes('SSL') || error.message.includes('certificate')) {
+      if (msg.includes('ssl') || msg.includes('certificate')) {
         throw new AppError('The website has an invalid SSL certificate. We cannot securely connect.', 495, 'SSL_ERROR');
       }
+
+      // Return the actual error message if it's not one of the above
+      throw new AppError(`Screenshot failed: ${error.message}`, 500, 'SCREENSHOT_FAILED');
     }
 
-    throw new AppError('Failed to generate screenshot due to an unexpected error.', 500, 'SCREENSHOT_FAILED');
+    throw new AppError('Failed to generate screenshot due to an unexpected system error.', 500, 'SCREENSHOT_FAILED');
   }
 }
 

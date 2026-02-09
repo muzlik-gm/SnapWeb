@@ -56,6 +56,8 @@ export default async function handler(
     res.status(200).send(fileBuffer);
   } catch (error) {
     console.error('Error serving screenshot:', error);
-    res.status(404).json({ error: 'Screenshot not found' });
+    // Return plain text error instead of JSON to avoid "JSON download" bug
+    res.setHeader('Content-Type', 'text/plain');
+    res.status(404).send('Screenshot not found. It may have expired or was stored on a different server instance.');
   }
 }

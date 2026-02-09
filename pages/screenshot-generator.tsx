@@ -264,6 +264,7 @@ export default function ScreenshotGenerator() {
 
                     <div className="flex flex-col sm:flex-row gap-3">
                       <Button 
+                        type="button"
                         variant="primary" 
                         size="lg" 
                         className="flex-1 shadow-lg hover:shadow-xl transition-shadow"
@@ -275,7 +276,7 @@ export default function ScreenshotGenerator() {
                       
                       {!session && (
                         <Link href="/auth/signup" className="flex-1">
-                          <Button variant="outline" size="lg" className="w-full">
+                          <Button type="button" variant="outline" size="lg" className="w-full">
                             Sign Up to Save
                           </Button>
                         </Link>

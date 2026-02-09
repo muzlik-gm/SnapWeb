@@ -49,8 +49,12 @@ export const ScreenshotModal: React.FC<ScreenshotModalProps> = ({
   if (!isOpen) return null;
 
   const handleDownload = () => {
+    // Prefer data URL for reliability if available
+    const isDataUrl = imageUrl?.startsWith('data:');
+    const downloadLink = isDataUrl ? imageUrl : (downloadUrl || imageUrl);
+
     const link = document.createElement('a');
-    link.href = downloadUrl || imageUrl;
+    link.href = downloadLink;
     link.download = `screenshot-${Date.now()}.${format}`;
     document.body.appendChild(link);
     link.click();
@@ -149,6 +153,7 @@ export const ScreenshotModal: React.FC<ScreenshotModalProps> = ({
               Scroll to view the full screenshot. Use zoom controls to adjust size.
             </p>
             <Button
+              type="button"
               onClick={handleDownload}
               variant="primary"
               size="md"

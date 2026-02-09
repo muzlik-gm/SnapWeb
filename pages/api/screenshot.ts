@@ -197,12 +197,21 @@ export default async function handler(
 
     const serveUrl = `/api/serve-screenshot?filename=${filename}`;
 
-    // Return success response - We use serveUrl for both imageUrl and downloadUrl
-    // to stay under Vercel's 4MB response payload limit (base64 is too large for full-page)
+    // Fix preview: Use base64 data URL for small images to ensure reliable preview
+    // on Vercel without hitting cross-lambda /tmp sharing issues.
+    // We cap it at 3MB to stay safely under Vercel's 4MB response payload limit.
+    let imageUrl = serveUrl;
+    if (result.buffer.length < 3 * 1024 * 1024) {
+      const mimeType = requestData.format === 'png' ? 'image/png' :
+                       requestData.format === 'jpeg' ? 'image/jpeg' : 'image/webp';
+      imageUrl = `data:${mimeType};base64,${result.buffer.toString('base64')}`;
+    }
+
+    // Return success response
     const responseData = {
       id: filename,
-      imageUrl: serveUrl,
-      downloadUrl: serveUrl,
+      imageUrl, // Data URL for small images, serve URL for large ones
+      downloadUrl: imageUrl, // Use data URL if available for better reliability on Vercel
       metadata: result.metadata,
     };
     
