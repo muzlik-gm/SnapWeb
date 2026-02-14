@@ -197,20 +197,27 @@ export const pricingTiers = [
   },
 ];
 
-// Generate API key
-export function generateApiKey(): string {
+/**
+ * Generates a cryptographically secure random string of a given length
+ */
+export function generateRandomString(length: number): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = 'sk_';
+  let result = '';
 
-  // Use cryptographically secure random values (available in Node.js 17+ and modern browsers)
-  const bytes = new Uint8Array(32);
+  // Use cryptographically secure random values
+  const bytes = new Uint8Array(length);
   globalThis.crypto.getRandomValues(bytes);
 
-  for (let i = 0; i < 32; i++) {
+  for (let i = 0; i < length; i++) {
     result += chars.charAt(bytes[i] % chars.length);
   }
 
   return result;
+}
+
+// Generate API key
+export function generateApiKey(): string {
+  return 'sk_' + generateRandomString(32);
 }
 
 // Slug generation for blog posts

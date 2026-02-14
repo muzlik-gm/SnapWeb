@@ -5,7 +5,7 @@ import path from 'path';
 import { authOptions } from '@/lib/auth';
 import { generateScreenshot } from '@/lib/screenshot';
 import { createScreenshot, decrementUserCredits, getUserById } from '@/lib/mongodb';
-import { createApiResponse, getClientIP, AppError } from '@/lib/utils';
+import { createApiResponse, getClientIP, AppError, generateRandomString } from '@/lib/utils';
 import { authenticateApiKey, checkApiRateLimit, logApiUsage, AuthenticatedRequest } from '@/lib/api-auth';
 import { validateScreenshotRequest, validateApiKey, sanitizeInput, createRequestFingerprint } from '@/lib/validation';
 import { logger, logSecurityEvent, logPerformanceMetric, trackError } from '@/lib/logging';
@@ -138,7 +138,7 @@ export default async function handler(
 
     // Save screenshot to file system
     const timestamp = Date.now();
-    const filename = `screenshot_${timestamp}_${Math.random().toString(36).substring(2)}.${requestData.format}`;
+    const filename = `screenshot_${timestamp}_${generateRandomString(12)}.${requestData.format}`;
     // Use /tmp on Vercel (writable), public/screenshots locally
     const isVercel = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
     const screenshotsDir = isVercel ? '/tmp/screenshots' : path.join(process.cwd(), 'public', 'screenshots');
